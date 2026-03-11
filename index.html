@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --card: #12151c;
+    --card-border: #1e2230;
+    --text: #e8eaf0;
+    --text-muted: #6b7194;
+    --accent: #00e5a0;
+    --accent-glow: rgba(0, 229, 160, 0.15);
+    --yellow: #ffd166;
+    --yellow-glow: rgba(255, 209, 102, 0.15);
+    --red: #ff6b6b;
+    --red-glow: rgba(255, 107, 107, 0.12);
+    --blue: #4dabf7;
+    --blue-glow: rgba(77, 171, 247, 0.15);
+    --purple: #b197fc;
+    --purple-glow: rgba(177, 151, 252, 0.15);
+    --orange: #ff922b;
+    --orange-glow: rgba(255, 146, 43, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px 10px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #00b880);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--bg);
+  }
+
+  .header-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .period-toggle {
+    display: flex;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .period-btn {
+    padding: 8px 20px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.25s;
+  }
+
+  .period-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent); }
+    50% { opacity: 0.6; box-shadow: 0 0 8px 3px var(--accent-glow); }
+  }
+
+  /* ── TEAM SUMMARY BAR ── */
+  .team-bar {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    padding: 10px 32px 14px;
+  }
+
+  .team-stat {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .team-stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+  }
+
+  .team-stat:nth-child(1)::before { background: var(--accent); }
+  .team-stat:nth-child(2)::before { background: var(--yellow); }
+  .team-stat:nth-child(3)::before { background: var(--blue); }
+  .team-stat:nth-child(4)::before { background: var(--purple); }
+  .team-stat:nth-child(5)::before { background: var(--red); }
+  .team-stat:nth-child(6)::before { background: var(--accent); }
+
+  .team-stat-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .team-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .team-stat-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* ── VENDOR CARDS ── */
+  .vendors-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    padding: 0 32px 20px;
+    flex: 1;
+  }
+
+  .vendor-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 18px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .vendor-card.top-seller {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow), inset 0 0 20px var(--accent-glow);
+  }
+
+  .vendor-card.top-seller .vendor-badge {
+    display: flex;
+  }
+
+  .vendor-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .vendor-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .vendor-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .vendor-badge {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    background: var(--accent-glow);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  /* Progress bars */
+  .progress-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .progress-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .progress-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .progress-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .progress-track {
+    height: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .progress-fill.green { background: linear-gradient(90deg, #00b880, var(--accent)); }
+  .progress-fill.yellow { background: linear-gradient(90deg, #e5a700, var(--yellow)); }
+  .progress-fill.over { background: linear-gradient(90deg, var(--accent), #00ffb3); box-shadow: 0 0 10px var(--accent-glow); }
+
+  /* Metrics grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .metric-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+
+  .metric-box-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+
+  .metric-box-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .metric-box-sub {
+    font-size: 9.5px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  /* ── COLORS PER VENDOR ── */
+  .v1 .vendor-avatar { background: var(--accent); }
+  .v2 .vendor-avatar { background: var(--yellow); }
+  .v3 .vendor-avatar { background: var(--blue); }
+  .v4 .vendor-avatar { background: var(--purple); }
+  .v5 .vendor-avatar { background: var(--orange); }
+
+  .v1 .progress-value, .v1 .metric-highlight { color: var(--accent); }
+  .v2 .progress-value, .v2 .metric-highlight { color: var(--yellow); }
+  .v3 .progress-value, .v3 .metric-highlight { color: var(--blue); }
+  .v4 .progress-value, .v4 .metric-highlight { color: var(--purple); }
+  .v5 .progress-value, .v5 .metric-highlight { color: var(--orange); }
+
+  /* ── META BANNER ── */
+  .meta-banner {
+    padding: 0 32px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .meta-progress-container {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .meta-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .meta-big-track {
+    flex: 1;
+    height: 14px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .meta-big-fill {
+    height: 100%;
+    border-radius: 7px;
+    background: linear-gradient(90deg, #00b880, var(--accent), #00ffb3);
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .meta-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .meta-remaining {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 12px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 180px;
+  }
+
+  .meta-remaining-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  .meta-remaining-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--yellow);
+  }
+
+  /* ── LOADING STATE ── */
+  .loading-msg {
+    text-align: center;
+    padding: 60px;
+    color: var(--text-muted);
+    font-size: 16px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .team-stat, .vendor-card, .meta-progress-container, .meta-remaining {
+    animation: slideUp 0.5s ease-out both;
+  }
+
+  .team-stat:nth-child(1) { animation-delay: 0.05s; }
+  .team-stat:nth-child(2) { animation-delay: 0.1s; }
+  .team-stat:nth-child(3) { animation-delay: 0.15s; }
+  .team-stat:nth-child(4) { animation-delay: 0.2s; }
+  .team-stat:nth-child(5) { animation-delay: 0.25s; }
+  .team-stat:nth-child(6) { animation-delay: 0.3s; }
+
+  .vendor-card:nth-child(1) { animation-delay: 0.15s; }
+  .vendor-card:nth-child(2) { animation-delay: 0.2s; }
+  .vendor-card:nth-child(3) { animation-delay: 0.25s; }
+  .vendor-card:nth-child(4) { animation-delay: 0.3s; }
+  .vendor-card:nth-child(5) { animation-delay: 0.35s; }
+
+  /* ── DATE RANGE PICKER ── */
+  .date-range-picker {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 6px 14px;
+  }
+
+  .date-range-picker.visible {
+    display: flex;
+  }
+
+  .date-range-picker label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .date-range-picker input[type="date"] {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 5px 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .date-range-picker input[type="date"]:focus {
+    border-color: var(--accent);
+  }
+
+  .date-range-picker input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+  }
+
+  /* period transition */
+  .fade-transition {
+    animation: fadeSwitch 0.4s ease;
+  }
+
+  @keyframes fadeSwitch {
+    0% { opacity: 0.3; transform: scale(0.99); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">K</div>
+    <div class="header-title">Painel Comercial</div>
+  </div>
+  <div class="header-right">
+    <div class="period-toggle">
+      <button class="period-btn" data-period="custom" onclick="setPeriod('custom')">Data</button>
+      <button class="period-btn active" data-period="week" onclick="setPeriod('week')">Semana</button>
+      <button class="period-btn" data-period="month" onclick="setPeriod('month')">Mês</button>
+    </div>
+    <div class="date-range-picker" id="date-range-picker">
+      <label>De:</label>
+      <input type="date" id="date-start" onchange="onDateRangeChange()">
+      <label>Até:</label>
+      <input type="date" id="date-end" onchange="onDateRangeChange()">
+    </div>
+    <div class="clock">
+      <span class="live-dot"></span>
+      <span id="clock-text"></span>
+    </div>
+  </div>
+</div>
+
+<div class="team-bar" id="team-bar"></div>
+
+<div class="meta-banner" id="meta-banner"></div>
+
+<div class="vendors-grid" id="vendors-grid">
+  <div class="loading-msg">Carregando dados...</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQGkU-7-9hNOUwJDHvISd8Y_PZXNT_bW9SKeO6vjVjFLZdVqSFJ_bcZAXl3v7Lw0kG_jBva27OFzxq3/pub?gid=1730324873&single=true&output=csv';
+
+const VENDOR_CONFIG = [
+  { aliases: ['Pedro Borotto', 'Pedro'], display: 'Pedro Borotto', initials: 'PB' },
+  { aliases: ['Arthur Almeida', 'Arthur'], display: 'Arthur Almeida', initials: 'AA' },
+  { aliases: ['Thiago Barcelos', 'Thiago', 'Thiago Barcelosago Barcelos'], display: 'Thiago Barcelos', initials: 'TB' },
+  { aliases: ['Thiago Eliel'], display: 'Thiago Eliel', initials: 'TE' },
+  { aliases: ['Daniel Sousa', 'Daniel'], display: 'Daniel Sousa', initials: 'DS' },
+];
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+
+let csvRows = [];
+let currentPeriod = 'week';
+let autoRotate = true;
+let customStart = null;
+let customEnd = null;
+const periodLabels = { week: 'Semana', month: 'Mês', custom: 'Personalizado' };
+
+// ═══════════════════════════════════════════════════════
+//  CSV PARSING
+// ═══════════════════════════════════════════════════════
+
+function parseCSVLine(line) {
+  const fields = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else if (ch === '"') {
+        inQuotes = false;
+      } else {
+        current += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ',') {
+        fields.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+  }
+  fields.push(current.trim());
+  return fields;
+}
+
+function parseCSV(text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]);
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const fields = parseCSVLine(lines[i]);
+    const row = {};
+    headers.forEach((h, idx) => { row[h] = fields[idx] || ''; });
+    rows.push(row);
+  }
+  return rows;
+}
+
+function parseBRL(str) {
+  if (!str) return 0;
+  // "R$ 11.100,00" -> 11100.00
+  const cleaned = str.replace(/R\$\s*/g, '').replace(/\./g, '').replace(',', '.');
+  const val = parseFloat(cleaned);
+  return isNaN(val) ? 0 : val;
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  const parts = str.split('/');
+  if (parts.length !== 3) return null;
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1;
+  const year = parseInt(parts[2], 10);
+  return new Date(year, month, day);
+}
+
+function parseInt0(str) {
+  const v = parseInt(str, 10);
+  return isNaN(v) ? 0 : v;
+}
+
+// ═══════════════════════════════════════════════════════
+//  VENDOR MATCHING
+// ═══════════════════════════════════════════════════════
+
+function resolveVendor(name) {
+  if (!name) return null;
+  const trimmed = name.trim();
+  // First pass: exact match (prioritizes full names like "Thiago Eliel" over partial "Thiago")
+  for (const vc of VENDOR_CONFIG) {
+    if (vc.aliases.some(a => a === trimmed)) return vc;
+  }
+  // Second pass: case-insensitive
+  const lower = trimmed.toLowerCase();
+  for (const vc of VENDOR_CONFIG) {
+    if (vc.aliases.some(a => a.toLowerCase() === lower)) return vc;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════
+//  PERIOD RANGES
+// ═══════════════════════════════════════════════════════
+
+function getWeekRange(today) {
+  // Commercial week: Tuesday to Monday
+  const d = new Date(today);
+  d.setHours(0, 0, 0, 0);
+  const dow = d.getDay(); // 0=Sun, 1=Mon, 2=Tue...
+  // days since last Tuesday
+  let daysSinceTue = (dow - 2 + 7) % 7;
+  const tuesday = new Date(d);
+  tuesday.setDate(d.getDate() - daysSinceTue);
+  const monday = new Date(tuesday);
+  monday.setDate(tuesday.getDate() + 6);
+  return [tuesday, monday];
+}
+
+function getMonthRange(today) {
+  const d = new Date(today);
+  const first = new Date(d.getFullYear(), d.getMonth(), 1);
+  const last = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  return [first, last];
+}
+
+function isInRange(date, start, end) {
+  if (!date) return false;
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d >= start && d <= end;
+}
+
+// ═══════════════════════════════════════════════════════
+//  DATA AGGREGATION
+// ═══════════════════════════════════════════════════════
+
+function aggregateData(period) {
+  const today = new Date();
+  let start, end;
+  if (period === 'custom' && customStart && customEnd) {
+    start = new Date(customStart);
+    end = new Date(customEnd);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+  } else if (period === 'week') {
+    [start, end] = getWeekRange(today);
+  } else {
+    [start, end] = getMonthRange(today);
+  }
+
+  // Group by vendor display name
+  const vendorData = {};
+
+  csvRows.forEach(row => {
+    const date = parseDate(row['Data']);
+    if (!isInRange(date, start, end)) return;
+
+    const vc = resolveVendor(row['Vendedor']);
+    if (!vc) return;
+
+    const key = vc.display;
+    if (!vendorData[key]) {
+      vendorData[key] = {
+        display: vc.display,
+        initials: vc.initials,
+        referidos: 0,
+        agendamentos: 0,
+        reunioes: 0,
+        vendas: 0,
+        fat_total: 0,
+        fat_pago: 0,
+        meta_fat: 0,
+        meta_ref: 0,
+        meta_mensal: 0,
+      };
+    }
+
+    const vd = vendorData[key];
+    vd.referidos += parseInt0(row['Referidos']);
+    vd.agendamentos += parseInt0(row['Agendamentos']);
+    vd.reunioes += parseInt0(row['Reuniões']);
+    vd.vendas += parseInt0(row['Vendas']);
+    vd.fat_total += parseBRL(row['Fat. Total']);
+    vd.fat_pago += parseBRL(row['Fat. Pago']);
+    vd.meta_fat += parseBRL(row['Meta Fat']);
+    vd.meta_ref += parseInt0(row['Meta Ref']) || parseBRL(row['Meta Ref']);
+    vd.meta_mensal += parseBRL(row['Meta Mensal']);
+  });
+
+  // Return as array, ordered by VENDOR_CONFIG order, only those with data
+  const result = [];
+  VENDOR_CONFIG.forEach(vc => {
+    if (vendorData[vc.display]) {
+      result.push(vendorData[vc.display]);
+    }
+  });
+  return result;
+}
+
+// ═══════════════════════════════════════════════════════
+//  FORMATTING
+// ═══════════════════════════════════════════════════════
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('pt-BR');
+}
+
+function fmtBRL(n) {
+  return 'R$ ' + Math.round(n).toLocaleString('pt-BR');
+}
+
+function pct(val, total) {
+  if (!total) return 0;
+  return Math.round((val / total) * 100);
+}
+
+// ═══════════════════════════════════════════════════════
+//  TEAM TOTALS
+// ═══════════════════════════════════════════════════════
+
+function getTeamTotals(vendors) {
+  const t = { fat_pago: 0, referidos: 0, agendamentos: 0, reunioes: 0, vendas: 0, meta_fat: 0, meta_ref: 0, meta_mensal: 0 };
+  vendors.forEach(v => {
+    t.fat_pago += v.fat_pago;
+    t.referidos += v.referidos;
+    t.agendamentos += v.agendamentos;
+    t.reunioes += v.reunioes;
+    t.vendas += v.vendas;
+    t.meta_fat += v.meta_fat;
+    t.meta_ref += v.meta_ref;
+    t.meta_mensal += v.meta_mensal;
+  });
+  t.noshow_pct = t.agendamentos > 0 ? Math.round((1 - t.reunioes / t.agendamentos) * 100) : 0;
+  t.conversao_pct = t.reunioes > 0 ? Math.round((t.vendas / t.reunioes) * 100) : 0;
+  t.ticket = t.vendas > 0 ? Math.round(t.fat_pago / t.vendas) : 0;
+  return t;
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+
+function renderTeamBar(vendors) {
+  const t = getTeamTotals(vendors);
+  const el = document.getElementById('team-bar');
+  el.innerHTML = `
+    <div class="team-stat">
+      <div class="team-stat-label">Faturamento</div>
+      <div class="team-stat-value" style="color:var(--accent)">${fmtBRL(t.fat_pago)}</div>
+      <div class="team-stat-sub">meta ${fmtBRL(t.meta_fat)}</div>
+    </div>
+    <div class="team-stat">
+      <div class="team-stat-label">Referidos</div>
+      <div class="team-stat-value" style="color:var(--yellow)">${fmt(t.referidos)}</div>
+      <div class="team-stat-sub">meta ${fmt(t.meta_ref)}</div>
+    </div>
+    <div class="team-stat">
+      <div class="team-stat-label">Agendamentos</div>
+      <div class="team-stat-value" style="color:var(--blue)">${fmt(t.agendamentos)}</div>
+      <div class="team-stat-sub">${t.noshow_pct}% no-show</div>
+    </div>
+    <div class="team-stat">
+      <div class="team-stat-label">Reuniões</div>
+      <div class="team-stat-value" style="color:var(--purple)">${fmt(t.reunioes)}</div>
+      <div class="team-stat-sub">${t.conversao_pct}% conversão</div>
+    </div>
+    <div class="team-stat">
+      <div class="team-stat-label">Vendas</div>
+      <div class="team-stat-value" style="color:var(--red)">${fmt(t.vendas)}</div>
+      <div class="team-stat-sub">${fmt(t.vendas)} fechamentos</div>
+    </div>
+    <div class="team-stat">
+      <div class="team-stat-label">Ticket Médio</div>
+      <div class="team-stat-value" style="color:var(--accent)">${fmtBRL(t.ticket)}</div>
+      <div class="team-stat-sub">coletado</div>
+    </div>
+  `;
+}
+
+function renderMetaBanner(vendors) {
+  const t = getTeamTotals(vendors);
+  // Week/Custom: meta = sum of Meta Fat; Month: meta = sum of Meta Mensal
+  const meta = currentPeriod === 'month' ? t.meta_mensal : t.meta_fat;
+  const p = meta > 0 ? Math.min(pct(t.fat_pago, meta), 100) : 0;
+  const remaining = Math.max(meta - t.fat_pago, 0);
+  const el = document.getElementById('meta-banner');
+  el.innerHTML = `
+    <div class="meta-progress-container">
+      <div class="meta-text">Meta Equipe — ${periodLabels[currentPeriod]}</div>
+      <div class="meta-big-track">
+        <div class="meta-big-fill" style="width:0%"></div>
+      </div>
+      <div class="meta-pct">${p}%</div>
+    </div>
+    <div class="meta-remaining">
+      <div class="meta-remaining-label">Falta</div>
+      <div class="meta-remaining-value">${fmtBRL(remaining)}</div>
+    </div>
+  `;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const fill = el.querySelector('.meta-big-fill');
+      if (fill) fill.style.width = p + '%';
+    });
+  });
+}
+
+function renderVendors(vendors) {
+  const grid = document.getElementById('vendors-grid');
+
+  // Adjust grid columns based on active vendor count
+  const count = vendors.length;
+  grid.style.gridTemplateColumns = count > 0 ? `repeat(${Math.min(count, 5)}, 1fr)` : '1fr';
+
+  if (count === 0) {
+    grid.innerHTML = '<div class="loading-msg">Nenhum dado encontrado para o período</div>';
+    return;
+  }
+
+  // Find top seller (highest fat_pago)
+  let topIdx = 0;
+  let topVal = 0;
+  vendors.forEach((v, i) => {
+    if (v.fat_pago > topVal) {
+      topVal = v.fat_pago;
+      topIdx = i;
+    }
+  });
+
+  grid.innerHTML = vendors.map((v, i) => {
+    const fatPct = pct(v.fat_pago, v.meta_fat);
+    const refPct = pct(v.referidos, v.meta_ref);
+    const noShowRate = v.agendamentos > 0 ? Math.round((1 - v.reunioes / v.agendamentos) * 100) : 0;
+    const convRate = v.reunioes > 0 ? Math.round((v.vendas / v.reunioes) * 100) : 0;
+    const ticket = v.vendas > 0 ? Math.round(v.fat_pago / v.vendas) : 0;
+    const isTop = i === topIdx && topVal > 0;
+    const fatBarClass = fatPct >= 100 ? 'over' : fatPct >= 60 ? 'green' : 'yellow';
+    const refBarClass = refPct >= 100 ? 'over' : refPct >= 60 ? 'green' : 'yellow';
+
+    return `
+      <div class="vendor-card v${i+1} ${isTop ? 'top-seller' : ''}">
+        <div class="vendor-header">
+          <div class="vendor-avatar">${v.initials}</div>
+          <div class="vendor-name">${v.display}</div>
+          <div class="vendor-badge">★ TOP</div>
+        </div>
+        <div class="progress-section">
+          <div class="progress-item">
+            <div class="progress-label-row">
+              <span class="progress-label">Faturamento</span>
+              <span class="progress-value">${fmtBRL(v.fat_pago)} / ${fmtBRL(v.meta_fat)}</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill ${fatBarClass}" data-width="${Math.min(fatPct, 100)}" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label-row">
+              <span class="progress-label">Referidos</span>
+              <span class="progress-value">${v.referidos} / ${fmt(v.meta_ref)}</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill ${refBarClass}" data-width="${Math.min(refPct, 100)}" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <div class="metric-box-label">Agenda</div>
+            <div class="metric-box-value">${v.agendamentos}</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-box-label">No-show</div>
+            <div class="metric-box-value" style="color:${noShowRate > 25 ? 'var(--red)' : 'var(--text)'}">${noShowRate}%</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-box-label">Reuniões</div>
+            <div class="metric-box-value">${v.reunioes}</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-box-label">Conversão</div>
+            <div class="metric-box-value" style="color:${convRate >= 30 ? 'var(--accent)' : 'var(--text)'}">${convRate}%</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-box-label">Vendas</div>
+            <div class="metric-box-value">${v.vendas}</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-box-label">Ticket</div>
+            <div class="metric-box-value">${fmtBRL(ticket)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Animate progress bars
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      grid.querySelectorAll('.progress-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  MAIN RENDER
+// ═══════════════════════════════════════════════════════
+
+function renderAll() {
+  const vendors = aggregateData(currentPeriod);
+  renderTeamBar(vendors);
+  renderMetaBanner(vendors);
+  renderVendors(vendors);
+}
+
+function setPeriod(p) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.period === p);
+  });
+
+  // Show/hide date range picker
+  const picker = document.getElementById('date-range-picker');
+  if (p === 'custom') {
+    picker.classList.add('visible');
+    // Default to current month range if no dates set
+    if (!document.getElementById('date-start').value) {
+      const today = new Date();
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+      document.getElementById('date-start').value = toISODate(firstDay);
+      document.getElementById('date-end').value = toISODate(today);
+      customStart = toISODate(firstDay);
+      customEnd = toISODate(today);
+    }
+  } else {
+    picker.classList.remove('visible');
+  }
+
+  ['team-bar', 'meta-banner', 'vendors-grid'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('fade-transition');
+    void el.offsetWidth;
+    el.classList.add('fade-transition');
+  });
+
+  renderAll();
+}
+
+function toISODate(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function onDateRangeChange() {
+  customStart = document.getElementById('date-start').value;
+  customEnd = document.getElementById('date-end').value;
+  if (customStart && customEnd && currentPeriod === 'custom') {
+    renderAll();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  CSV FETCH
+// ═══════════════════════════════════════════════════════
+
+async function fetchAndLoad() {
+  try {
+    const resp = await fetch(CSV_URL + '&_t=' + Date.now());
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const text = await resp.text();
+    csvRows = parseCSV(text);
+    console.log('[Dashboard] Loaded ' + csvRows.length + ' rows');
+    renderAll();
+  } catch (err) {
+    console.error('[Dashboard] Fetch error:', err);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  CLOCK
+// ═══════════════════════════════════════════════════════
+
+function updateClock() {
+  const now = new Date();
+  const str = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const day = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
+  document.getElementById('clock-text').textContent = day + ' · ' + str;
+}
+
+// ═══════════════════════════════════════════════════════
+//  AUTO-ROTATE & AUTO-REFRESH
+// ═══════════════════════════════════════════════════════
+
+// Auto-rotate between week/month every 15s (skips custom)
+setInterval(() => {
+  if (autoRotate && currentPeriod !== 'custom') {
+    setPeriod(currentPeriod === 'week' ? 'month' : 'week');
+  }
+}, 15000);
+
+// Pause auto-rotate on manual click for 60s; custom mode stops rotation entirely
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    autoRotate = false;
+    if (btn.dataset.period !== 'custom') {
+      setTimeout(() => { autoRotate = true; }, 60000);
+    }
+  });
+});
+
+// Auto-refresh CSV every 5 minutes
+setInterval(fetchAndLoad, 300000);
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+
+updateClock();
+setInterval(updateClock, 10000);
+fetchAndLoad();
+</script>
+
+</body>
+</html>
