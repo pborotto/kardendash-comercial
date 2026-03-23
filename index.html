@@ -175,13 +175,25 @@
     margin-top: 2px;
   }
 
-  /* ── VENDOR CARDS ── */
-  .vendors-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 14px;
+  /* ── VENDOR CARDS CAROUSEL ── */
+  .vendors-carousel-wrapper {
+    position: relative;
+    overflow: hidden;
     padding: 0 32px 20px;
     flex: 1;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .vendors-grid {
+    display: flex;
+    gap: 14px;
+    will-change: transform;
+    min-height: 0;
+  }
+
+  .vendors-grid .vendor-card {
+    flex-shrink: 0;
   }
 
   .vendor-card {
@@ -543,8 +555,10 @@
 
 <div class="meta-banner" id="meta-banner"></div>
 
-<div class="vendors-grid" id="vendors-grid">
-  <div class="loading-msg">Carregando dados...</div>
+<div class="vendors-carousel-wrapper" id="vendors-carousel-wrapper">
+  <div class="vendors-grid" id="vendors-grid">
+    <div class="loading-msg">Carregando dados...</div>
+  </div>
 </div>
 
 <script>
@@ -870,15 +884,76 @@ function renderMetaBanner(vendors) {
   });
 }
 
+let marqueeAnim = null;
+let marqueeOffset = 0;
+const MARQUEE_SPEED = 0.5; // pixels per frame (~30px/s at 60fps)
+const VISIBLE_CARDS = 3;
+
+function sizeCarouselCards() {
+  const wrapper = document.getElementById('vendors-carousel-wrapper');
+  const grid = document.getElementById('vendors-grid');
+  if (!wrapper || !grid) return;
+  const wrapperWidth = wrapper.clientWidth;
+  const gap = 14;
+  const cardWidth = (wrapperWidth - (VISIBLE_CARDS - 1) * gap) / VISIBLE_CARDS;
+  grid.querySelectorAll('.vendor-card').forEach(card => {
+    card.style.width = cardWidth + 'px';
+    card.style.minWidth = cardWidth + 'px';
+  });
+}
+
+function startMarquee() {
+  stopMarquee();
+  const grid = document.getElementById('vendors-grid');
+  const wrapper = document.getElementById('vendors-carousel-wrapper');
+  if (!grid || !wrapper) return;
+
+  const originalCards = grid.querySelectorAll('.vendor-card:not(.clone)');
+  if (originalCards.length <= VISIBLE_CARDS) return;
+
+  // Clone all cards and append for seamless loop
+  grid.querySelectorAll('.vendor-card.clone').forEach(c => c.remove());
+  originalCards.forEach(card => {
+    const clone = card.cloneNode(true);
+    clone.classList.add('clone');
+    grid.appendChild(clone);
+  });
+  sizeCarouselCards();
+
+  marqueeOffset = 0;
+  const gap = 14;
+  const wrapperWidth = wrapper.clientWidth;
+  const cardWidth = (wrapperWidth - (VISIBLE_CARDS - 1) * gap) / VISIBLE_CARDS;
+  const setWidth = originalCards.length * (cardWidth + gap);
+
+  function tick() {
+    marqueeOffset += MARQUEE_SPEED;
+    if (marqueeOffset >= setWidth) {
+      marqueeOffset -= setWidth;
+    }
+    grid.style.transform = `translateX(-${marqueeOffset}px)`;
+    marqueeAnim = requestAnimationFrame(tick);
+  }
+  marqueeAnim = requestAnimationFrame(tick);
+}
+
+function stopMarquee() {
+  if (marqueeAnim) cancelAnimationFrame(marqueeAnim);
+  marqueeAnim = null;
+}
+
+window.addEventListener('resize', () => {
+  sizeCarouselCards();
+});
+
 function renderVendors(vendors) {
   const grid = document.getElementById('vendors-grid');
-
-  // Adjust grid columns based on active vendor count
   const count = vendors.length;
-  grid.style.gridTemplateColumns = count > 0 ? `repeat(${Math.min(count, 5)}, 1fr)` : '1fr';
 
   if (count === 0) {
     grid.innerHTML = '<div class="loading-msg">Nenhum dado encontrado para o período</div>';
+    grid.style.transform = 'translateX(0)';
+    stopMarquee();
     return;
   }
 
@@ -967,6 +1042,12 @@ function renderVendors(vendors) {
       });
     });
   });
+
+  // Setup continuous marquee
+  marqueeOffset = 0;
+  grid.style.transform = 'translateX(0)';
+  sizeCarouselCards();
+  startMarquee();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1003,7 +1084,7 @@ function setPeriod(p) {
     picker.classList.remove('visible');
   }
 
-  ['team-bar', 'meta-banner', 'vendors-grid'].forEach(id => {
+  ['team-bar', 'meta-banner', 'vendors-carousel-wrapper'].forEach(id => {
     const el = document.getElementById(id);
     el.classList.remove('fade-transition');
     void el.offsetWidth;
